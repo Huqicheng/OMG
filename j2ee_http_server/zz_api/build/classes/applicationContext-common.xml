@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+	http://www.springframework.org/schema/tx  
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd 
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    
+    
+	<context:annotation-config/>
+	
+	<context:component-scan base-package="com.gas,entity.config"/>
+    
+    <!-- Datasource -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://localhost/test"/>
+		<property name="username" value="root"/>
+		<property name="password" value=""/>
+	</bean>
+	
+	
+	<!-- SqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		
+		<!-- configuration file location -->
+		<property name="configLocation" value="classpath:mybatis.xml"/>
+	
+		<!-- mappers -->
+		<property name="mapperLocations">
+			<list>
+				<!-- reg exp indicates the mapper files -->
+				<value>classpath:ca/uwaterloo/entity/config/*.xml</value>
+			</list>
+		</property>
+	</bean>
+    
+    <!-- sql mappers --> 
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="ca.uwaterloo.mapper"/>
+	</bean>
+	
+	<bean id="userDao" class="ca.uwaterloo.dao.impl.UserDaoImpl">  </bean>
+	<!-- accountService-->
+    <bean id="userService" class="ca.uwaterloo.service.impl.UserServiceImpl">
+    	<property name="userDao" ref="userDao"></property> 
+    </bean>
+    
+	<!-- accountAction -->
+	<bean id="userAction" class="ca.uwaterloo.action.UserAction">
+	  <!-- set properties, setters and getters methods required -->
+      <property name="userService" ref="userService"></property>  
+    </bean>
+    	 
+ 	<!--transaction manager -->
+	 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	
+</beans>

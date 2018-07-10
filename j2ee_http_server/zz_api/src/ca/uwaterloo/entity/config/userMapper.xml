@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace references to com.gas.mapper.SomeMapper -->
+<mapper namespace="ca.uwaterloo.mapper.UserMapper">
+
+	<!-- stucture of the result map -->
+	<resultMap type="ca.uwaterloo.entity.User" id="userResultMap">
+		<id property="id" column="id" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+	</resultMap>
+	
+	<!-- id equals to the methods in the mapper obect -->
+	<!-- alias of User class is user, which is configured in mbatis.xml -->
+	<select id="login" resultType="user" parameterType="user">
+		<![CDATA[
+			select * 
+			from user 
+			where username = #{username} and password = #{password} 
+			limit 1;
+        ]]>
+	</select>
+	
+</mapper>
